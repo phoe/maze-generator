@@ -175,72 +175,71 @@ MAPCAR pod spodem jest skrótem na sprawdzenie wielu wartości pod rząd - czy n
 zdejmuje się :ZERO 0, potem :ONE 1, i tak do końca listy :NINE 9 jest sprawdzane osobno,
 gdyż pod koniec sprawdzamy jeszcze warunek brzegowy dla HEAP-EMPTY-P. |#
 (let ((heap (make-heap 10))) 
-    (labels ((check-peek (data priority)
-               (let ((entry (heap-peek heap)))
-                 (assert (equal data (data entry)))
-                 (assert (equal priority (priority entry)))))
-             (check-pop (data priority) 
-               (check-peek data priority)
-               (heap-pop heap)))
-      
-      (signals heap-error (heap-peek heap))
-      (signals heap-error (heap-pop heap))
-      
-      (assert (heap-empty-p heap))
-      (heap-push heap :two 2)
-      (check-peek :two 2)
-      (assert (not (heap-empty-p heap)))
-      
-      (heap-push heap :one 1)
-      (check-peek :one 1)
-      (heap-push heap :three 3)
-      (check-peek :one 1)
-      
-      (heap-push heap :zero 0)
-      (check-peek :zero 0)
+  (labels ((check-peek (data priority)
+             (let ((entry (heap-peek heap)))
+               (assert (equal data (data entry)))
+               (assert (equal priority (priority entry)))))
+           (check-pop (data priority) 
+             (check-peek data priority)
+             (heap-pop heap))) 
+    (signals heap-error (heap-peek heap))
+    (signals heap-error (heap-pop heap))
+    
+    (assert (heap-empty-p heap))
+    (heap-push heap :two 2)
+    (check-peek :two 2)
+    (assert (not (heap-empty-p heap)))
+    
+    (heap-push heap :one 1)
+    (check-peek :one 1)
+    (heap-push heap :three 3)
+    (check-peek :one 1)
+    
+    (heap-push heap :zero 0)
+    (check-peek :zero 0)
 
-      (heap-push heap :zero 0)
-      (check-peek :zero 0) 
-      (heap-push heap :zero 0)
-      (check-peek :zero 0)
-      (check-pop :zero 0)
-      (check-peek :zero 0)
-      (check-pop :zero 0)
-      (check-peek :zero 0)
-      
-      (heap-push heap :eight 8)
-      (check-peek :zero 0)
-      
-      (heap-push heap :four 4)
-      (check-peek :zero 0)
-      
-      (heap-push heap :seven 7)
-      (check-peek :zero 0)
-      
-      (heap-push heap :nine 9)
-      (check-peek :zero 0)
-      
-      (heap-push heap :six 6)
-      (check-peek :zero 0)
-      
-      (assert (not (heap-full-p heap)))
-      (heap-push heap :five 5)
-      (check-peek :zero 0)
-      (assert (heap-full-p heap))
-      
-      (signals heap-error (heap-push heap :ten 10))
+    (heap-push heap :zero 0)
+    (check-peek :zero 0) 
+    (heap-push heap :zero 0)
+    (check-peek :zero 0)
+    (check-pop :zero 0)
+    (check-peek :zero 0)
+    (check-pop :zero 0)
+    (check-peek :zero 0)
+    
+    (heap-push heap :eight 8)
+    (check-peek :zero 0)
+    
+    (heap-push heap :four 4)
+    (check-peek :zero 0)
+    
+    (heap-push heap :seven 7)
+    (check-peek :zero 0)
+    
+    (heap-push heap :nine 9)
+    (check-peek :zero 0)
+    
+    (heap-push heap :six 6)
+    (check-peek :zero 0)
+    
+    (assert (not (heap-full-p heap)))
+    (heap-push heap :five 5)
+    (check-peek :zero 0)
+    (assert (heap-full-p heap))
+    
+    (signals heap-error (heap-push heap :ten 10))
 
-      (mapcar (lambda (x) (apply #'check-pop x))
-              '((:zero 0) (:one 1) (:two 2)
-                (:three 3) (:four 4) (:five 5)
-                (:six 6) (:seven 7) (:eight 8)))
-      
-      (assert (not (heap-empty-p heap))) 
-      (check-pop :nine 9) 
-      (assert (heap-empty-p heap))
-      
-      (signals heap-error (heap-peek heap))
-      (signals heap-error (heap-pop heap))))
+    (mapcar (lambda (x) (apply #'check-pop x))
+            '((:zero 0) (:one 1) (:two 2)
+              (:three 3) (:four 4) (:five 5)
+              (:six 6) (:seven 7) (:eight 8)))
+    
+    (assert (not (heap-empty-p heap))) 
+    (check-pop :nine 9) 
+    (assert (heap-empty-p heap))
+    
+    (signals heap-error (heap-peek heap))
+    (signals heap-error (heap-pop heap))))
 
 
 
@@ -255,9 +254,9 @@ gdyż pod koniec sprawdzamy jeszcze warunek brzegowy dla HEAP-EMPTY-P. |#
 
 #| Nie będzie tu skomplikowane - piszemy funkcję, która tworzy tablicę, po czym
 wypełnia ją liczbami pseudolosowymi.
-Wyróżniam to jako osobny odcinek, bo jest tu pole do rozwoju, gdyby trzeba byłouwzględnić 
+Wyróżniam to jako osobny odcinek, bo jest tu pole do rozwoju, gdyby trzeba było uwzględnić 
 nieco bardziej regularne dane do generowania labiryntów. Jakieś lokalne zgrupowania, 
-wzniesienia, detale geograficzne - można to zaimplementować właśnie w tym miejscu.|#
+wzniesienia, detale geograficzne - można to zaimplementować właśnie w tym miejscu. |#
 (defun make-randomized-array (y-size x-size &optional (maximum 255))
   (let ((array (make-array (list y-size x-size) :element-type 'integer)))
     (dotimes (y y-size)
@@ -284,14 +283,9 @@ Nasz algorytm zakłada, że dysponujemy tablicą z danymi z poprzedniego kroku. 
 te liczby jako wierzchołki grafu, to musimy również mieć sposób na oznaczenie krawędzi - możemy
 to osiągnąć za pomocą trójwymiarowej tablicy informującej o tym, czy wierzchołek ma krawędzie 
 w dół albo w prawo. Dwa pierwsze wymiary to wymiary oryginalnej tablicy, trzeci wymiar oznacza
-dwa bity; pierwszy oznacza krawędź w dół, drugi - w prawo. |#
-(defun make-maze (y-size x-size &key random-array starting-point)
-  (let ((data (or random-array (make-randomized-array y-size x-size)))
-        (edges (make-array (list y-size x-size 2) :element-type 'bit))
-        (starting-point (or starting-point (list (random y-size) (random x-size)))))
-    (generate-maze data edges starting-point)))
+dwa bity; pierwszy oznacza krawędź w dół, drugi - w prawo. 
 
-#| Pesymistycznie rzecz biorąc, w kolejce może znaleźć się 4/5 wszystkich wierzchołków, każdy w
+Pesymistycznie rzecz biorąc, w kolejce może znaleźć się 4/5 wszystkich wierzchołków, każdy w
 maksymalnie czterech duplikatach - stąd rozmiar sterty. Nie usuwam duplikatów, gdyż sprawdzanie
 całej sterty za każdym razem byłoby O(n) - lepiej sprawdzać to za każdym razem przy zdejmowaniu
 wierzchołka ze sterty.
@@ -299,8 +293,11 @@ wierzchołka ze sterty.
 Najpierw inicjalizujemy struktury danych - oznaczamy punkt startowy jako odwiedzony i karmimy
 nim kolejkę. Sprawdzamy i tworzymy pierwszą krawędź, od której zacznie się budowa labiryntu.
 Potem - wchodzimy w pętlę główną.|#
-(defun generate-maze (data edges starting-point)
-  (let* ((heap (make-heap (ceiling (array-total-size data) 5/16))))
+(defun make-maze (y-size x-size &key random-array starting-point)
+  (let* ((data (or random-array (make-randomized-array y-size x-size)))
+         (edges (make-array (list y-size x-size 2) :element-type 'bit))
+         (starting-point (or starting-point (list (random y-size) (random x-size))))
+         (heap (make-heap (ceiling (array-total-size data) 5/16))))
     (heap-push heap starting-point 0)
     (if (valid-vertex-p (get-neighbor starting-point :down) edges)
         (make-edge edges starting-point (get-neighbor starting-point :down))
