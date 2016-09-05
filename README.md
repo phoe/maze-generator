@@ -1,6 +1,7 @@
 # maze-generator
 A simple maze generator for Common Lisp - exercise with comments in Polish.
 
+See the raw version of this file for a better-looking example maze.
 ```
 ███████████████████████████████████████████████████████████████████████████████████████████████████████
 ███████████████████████████████████████████████████████████████████████████████████████████████████████
