@@ -159,9 +159,16 @@ indeks jako argument, stąd zdefiniowanie indeksu jako argumentu opcjonalnego. |
 się za każdym razem, gdy ten plik zostaje skompilowany lub wczytany - więc, jeśli cokolwiek się
 sypnie, ten program w ogóle dalej nie ruszy. 
 Najpierw coś, w czym Lisp jest bardzo dobry - miniframework testowy do chwytania błędów,
-napisany w dwóch linijkach. |#
+napisany w czterech linijkach.
+
+Poprzednio była tu wersja w czterech linijkach, ale wykryłem w niej błąd - mianowicie wewnątrz HANDLER-CASE
+używana jest funkcja ERROR, która sygnalizuje błąd - czyli stan typu ERROR. W związku z tym, (SIGNALS ERROR ...)
+nigdy nie sygnalizowało błędu, ponieważ błąd, który miało sygnalizować, był od razu łapany. Ta wersja poprawnie
+sygnalizuje wszystkie stany. |#
 (defmacro signals (condition-type &body body)
-  `(handler-case (progn ,@body (error "Condition was not signaled.")) (,condition-type ())))
+  (let ((var (gensym)))
+    `(let (,var) (handler-case (progn ,@body (setf ,var t)) (,condition-type ()))
+       (when ,var (error "Condition ~S was not signaled." ',condition-type)))))
 
 #| I sam test jednostkowy. Mam nadzieję, że jest czytelny sam z siebie.
 
