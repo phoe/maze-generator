@@ -259,6 +259,11 @@ gdyż pod koniec sprawdzamy jeszcze warunek brzegowy dla HEAP-EMPTY-P. |#
 ;; ## Generator tablic pseudolosowych
 ;; #############################################################
 
+#| Poprzednia wersja tego kodu miała błąd - generator liczb losowych nie był inicjalizowany
+przy uruchomieniu programu. Niniejszym to naprawiam. |#
+
+(setf *random-state* (make-random-state t))
+
 #| Nie będzie tu skomplikowane - piszemy funkcję, która tworzy tablicę, po czym
 wypełnia ją liczbami pseudolosowymi.
 Wyróżniam to jako osobny odcinek, bo jest tu pole do rozwoju, gdyby trzeba było uwzględnić 
